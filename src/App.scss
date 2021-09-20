@@ -1,0 +1,105 @@
+html {
+  font-size: 18px;
+}
+
+body {
+  background-color: #222222;
+}
+
+@media screen and (max-width: 600px) { 
+  html {
+    font-size: 3vw;
+  }
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.button-wrap {
+  margin-right: 0.5rem;
+}
+
+.check {
+  font-size: 1.5rem;
+  color: #FFFFFF;
+}
+
+.bingo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 6rem;
+}
+
+.bingo-wrap {
+  margin: auto;
+  transform: rotate(45deg);
+}
+
+.bingo-block {
+  background-color: #FFFFFF;
+  margin: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid #000000;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.bingo-image {
+  display: flex;
+  width: 3.7rem;
+  height: 3.7rem;
+  object-fit: contain;
+}
+
+.bingo-candidate-1 {
+  background-color: #0000FF;
+}
+
+.bingo-candidate-2 {
+  background-color: #8888FF;
+}
+
+.bingo-candidate-3 {
+  background-color: #CCCCFF;
+}
+
+.message-desc {
+  font-size: 1.5rem;
+  color: #FFFFFF;
+}
+
+.message-warning {
+  font-size: 1.2rem;
+  color: #FF0000;
+  height: 1.3rem;
+}
+
+
+.nodrag {
+  -webkit-user-drag: none;
+   -khtml-user-drag: none;
+     -moz-user-drag: none;
+      -ms-user-drag: none;
+       -o-user-drag: none;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
