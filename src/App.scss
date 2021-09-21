@@ -12,28 +12,46 @@ body {
   }
 }
 
+.tool-container {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}
+
 .button-container {
   display: flex;
   flex-direction: row;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 .button-wrap {
-  margin-right: 0.5rem;
+  margin-right: 1rem;
 }
 
 .check {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #FFFFFF;
+}
+
+.speech {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.3rem;
+  color: #FFFFFF;
+}
+
+.speech-script {
+  font-size: 1.3rem;
+  color: #00FF00;
+  margin-left: 1rem;
 }
 
 .bingo-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 6rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .bingo-wrap {
@@ -56,6 +74,16 @@ body {
   }
 }
 
+.bingo-coord {
+  color: #000000;
+  position: absolute;
+  transform: rotate(-45deg);
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  margin-right: 1.2rem;
+}
+
 .bingo-image {
   display: flex;
   width: 3.7rem;
@@ -76,16 +104,36 @@ body {
 }
 
 .message-desc {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #FFFFFF;
 }
 
 .message-warning {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #FF0000;
-  height: 1.3rem;
+  height: 1.5rem;
 }
 
+.desc-container {
+  margin-top: 1rem;
+  color: white;
+  margin-bottom: 10rem;
+}
+
+.desc-question {
+  margin-top: 3rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #FFAAAA
+}
+
+.desc-answer {
+  margin-top: 0.8rem;
+  margin-left: 1.8rem;
+  margin-right: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
 
 .nodrag {
   -webkit-user-drag: none;

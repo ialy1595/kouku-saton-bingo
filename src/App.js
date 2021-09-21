@@ -1,9 +1,12 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import './App.scss';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Switch from '@mui/material/Switch';
+import regeneratorRuntime from "regenerator-runtime";
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
 
@@ -19,6 +22,7 @@ function App() {
   ]])
   const [isInanna, setIsInanna] = useState(false);
   const [warnMsg, setWarnMsg] = useState("");
+  const [stillListening, setStillListening] = useState(false);
 
   const transM = (a) => a[0].map((x, c) => a.map(r => r[c]))
   
@@ -53,6 +57,7 @@ function App() {
   }
 
   const clickBingo = (x, y) => {
+    if(x < 0 || x >= 5 || y < 0 || y >= 5) return;
     if(round < 2) {
       const res = bingo.slice(0, round + 1);
       if(res[round][x][y]) {
@@ -286,6 +291,11 @@ function App() {
           <td key={`block${i}${j}`}>
             <div className={`bingo-block ${cls}`} onClick={() => {clickBingo(i, j)}}>
               {inner}
+              { stillListening ? 
+                (<div className="bingo-coord">
+                  {`${i + 1} ${j + 1}`}
+                </div>) : null
+              }
             </div>
           </td>
         )
@@ -309,33 +319,163 @@ function App() {
     )
   }
 
-  const BingoTableView = useMemo(BingoTable, [bingo, round, isInanna])
+  const BingoTableView = useMemo(BingoTable, [bingo, round, isInanna, stillListening])
 
   const handleInanna = (e) => {
     setIsInanna(e.target.checked);
   }
 
+  const transNum = (x) => {
+    if(["일", "하나", "1", 1].includes(x)) return 1;
+    if(["이", "둘", "2", 2].includes(x)) return 2;
+    if(["삼", "셋", "3", 3].includes(x)) return 3;
+    if(["사", "넷", "4", 4].includes(x)) return 4;
+    if(["오", "다섯", "5", 5].includes(x)) return 5;
+    return 0;
+  }
+
+  const commands = [
+    {
+      command: '이난나',
+      callback: () => setIsInanna(!isInanna)
+    },
+    {
+      command: '취소',
+      callback: () => cancleBingo()
+    },
+    {
+      command: '리셋',
+      callback: () => resetBingo()
+    },
+    {
+      command: '폭탄 :i :j',
+      callback: (i, j) => clickBingo(transNum(i) -1 , transNum(j) - 1)
+    },
+    {
+      command: '음성 해제',
+      callback: () => handleSpeech()
+    }
+  ];
+
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition({ commands });
+
+  const handleSpeech = () => {
+    if(stillListening) {
+      setStillListening(false);
+      SpeechRecognition.stopListening();
+      resetTranscript();
+    }
+    else {
+      setStillListening(true);
+      SpeechRecognition.startListening({ 
+        continuous: false,
+        language: 'ko'
+      });
+    }
+  }
+
+  const desc = () => {
+    const script = [
+      [
+        `Q. 어떻게 쓰면 되나요?`,
+        `처음에 놓인 두 해골 위치를 클릭해서 입력해주세요. 이후 폭탄을 놓을 때마다 그 위치를 클릭해주면 알아서 십자로 적용해줍니다.\n
+         잘못 클릭했을 경우 [취소] 버튼으로 되돌릴 수 있고, 처음부터 다시 할 경우 [리셋] 버튼을 누르면 됩니다.`
+      ],
+      [
+        `Q. 폭탄을 어디에 놓아야 좋을지 모르겠어요.`,
+        `그런 당신을 위해 추천 기능을 넣었습니다. 빙고 장판 중 파란색 배경인 부분이 추천하는 자리입니다.\n
+         일차적으로는 3번째마다 빙고(이하 3빙고)를 할 수 있는지를 고려하고, 그다음엔 위 중앙에 나오는 쿠크에게 딜하기 편한지를 고려합니다.\n
+         물론 수식 몇 개로 모든 경우의 수에 완벽한 답을 낼 순 없겠지만 대체로 쓸만할 겁니다 :)\n`
+      ],
+      [
+        `Q. 추천한 자리에 해골이나 망치가 있어요.`,
+        `그런 당신을 위해 추천을 3위까지 해드립니다. 더 추천하는 자리일수록 진한 파란색으로 표시됩니다. 또한 가능한 한 세 자리 중 하나는 해골이 없는 자리가 포함되도록 했습니다.`
+      ],
+      [
+        `Q. 이번에 이난나 써서 넘길 건데요?`,
+        `그런 당신을 위해 이난나 모드를 넣었습니다. 이난나 체크박스를 체크하시면 3빙고를 고려하지 않고 딜하기 편한지만 생각하여 추천해줍니다.\n
+         단, 2번 연속으로 이난나를 쓸 경우는 없다고 생각하여 3빙고 타이밍이 지나면 자동으로 이난나 체크가 해제되도록 했습니다.`
+      ],
+      [
+        `Q. 저는 더블모니터가 아닌데요?`,
+        `그런 당신을 위해 (아마도) 모바일에서도 보기 편하도록 디자인했습니다. 님폰없?`
+      ],
+      [
+        `Q. 패턴 피하고 딜하느라 바쁜데요?`,
+        `그런 당신을 위해 음성인식 모드를 넣었습니다. 음성인식 스위치를 켜면 음성 인식을 시작합니다. 단, 초록색으로 표시되는 인식한 단어를 보면 느끼시겠지만 인식률이 높지는 않아서 천천히 또박또박 말해주셔야 합니다.\n
+         만약에 잘 못 알아들었으면 초록색 글씨가 사라지길 기다린 다음 말씀해주시면 됩니다. 지원되는 명령어는 아래와 같습니다.\n
+         폭탄 x y: 음성인식 모드를 키면 좌표가 나올 텐데, 폭탄과 놓을 좌표와 함께 말해주시면(e.g. 폭탄 둘 넷) 그 위치를 클릭한 효과를 냅니다. 일이삼사오도 인식은 되도록 했는데 하나둘셋넷다섯이 훨씬훨씬 인식률이 좋을 겁니다.\n
+         취소: [취소]버튼과 동일한 효과입니다.\n
+         리셋: [리셋]버튼과 동일한 효과입니다.\n
+         이난나: 이난나 모드를 on/off 합니다.\n
+         음성 해제: 음성인식 모드를 해제합니다.`
+      ]
+    ];
+
+    return (<div className="desc-container">
+      {script.map(x => (<div>
+        <div className="desc-question">
+          {x[0]}
+        </div>
+        {x[1].split("\n").map(y => (<div className="desc-answer">{y}</div>))}
+      </div>))}
+    </div>)
+  }
+
+
+  useEffect(() => {
+    if((!listening) && stillListening) {
+      resetTranscript();
+      SpeechRecognition.startListening({ 
+        continuous: false,
+        language: 'ko'
+      });
+    }
+  }, [listening])
+
   return (
     <div>
       <Container maxWidth="sm">
-        <div className="button-container">
-          <div className="button-wrap">
-            <Button variant="contained" onClick={resetBingo}>리셋</Button>
+        <div className="tool-container">
+          <div className="message-warning">
+            {`※ 처음 오셨다면 아래 문답을 먼저 읽어주세요!`}
           </div>
-          <div className="button-wrap">
-            <Button variant="contained" className="btn" onClick={cancleBingo}>취소</Button>
+          <div className="button-container">
+            <div className="button-wrap">
+              <Button variant="contained" onClick={resetBingo}>리셋</Button>
+            </div>
+            <div className="button-wrap">
+              <Button variant="contained" className="btn" onClick={cancleBingo}>취소</Button>
+            </div>
+            <FormControlLabel className="check" control={<Checkbox checked={isInanna} onChange={handleInanna} style={{color:'white'}}/>} label="이난나" />
           </div>
-        </div>
-        <FormControlLabel className="check" control={<Checkbox checked={isInanna} onChange={handleInanna} style={{color:'white'}}/>} label="이난나" />
-        <div className="message-desc">
-          {`${round < 2 ? "초기 빙고" : `${round - 1}번째 폭탄`} 놓을 차례${(!isInanna) && (round % 3 === 1) && (round > 1)? " (무적용 빙고 해야됨!)" : ""}`}
-        </div>
-        <div className="message-warning">
-          {`${warnMsg}`}
+          <div>
+            { browserSupportsSpeechRecognition ? 
+              (<div className="speech">
+                <FormControlLabel control={<Switch checked={stillListening} onChange={handleSpeech} />} label="음성 인식" />
+                <div className="speech-script">{transcript}</div>
+              </div>) :
+              (<div className="message-warning">
+                {`브라우저가 음성 인식을 지원하지 않습니다.`}
+              </div>)
+            }          
+          </div>
+          <div className="message-desc">
+            {`${round < 2 ? "초기 빙고" : `${round - 1}번째 폭탄`} 놓을 차례${(!isInanna) && (round % 3 === 1) && (round > 1)? " (무적용 빙고 해야됨!)" : ""}`}
+          </div>
+          <div className="message-warning">
+            {`${warnMsg}`}
+          </div>
         </div>
         <div className="bingo-container">
           {BingoTableView}
         </div>
+        {desc()}
       </Container>
     </div>
   );
