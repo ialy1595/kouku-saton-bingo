@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
-import regeneratorRuntime from "regenerator-runtime";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
@@ -326,12 +325,23 @@ function App() {
   }
 
   const transNum = (x) => {
-    if(["일", "하나", "1", 1].includes(x)) return 1;
-    if(["이", "둘", "2", 2].includes(x)) return 2;
-    if(["삼", "셋", "3", 3].includes(x)) return 3;
-    if(["사", "넷", "4", 4].includes(x)) return 4;
-    if(["오", "다섯", "5", 5].includes(x)) return 5;
+    x = `${x}`.replace(/\s+/g, '');
+    if(["일", "하나", "1", 1, "열"].includes(x)) return 1;
+    if(["이", "둘", "2", 2, "스물"].includes(x)) return 2;
+    if(["삼", "셋", "3", 3, "서른"].includes(x)) return 3;
+    if(["사", "넷", "4", 4, "마흔"].includes(x)) return 4;
+    if(["오", "다섯", "5", 5, "쉰"].includes(x)) return 5;
     return 0;
+  }
+
+  const transDoubleNum = (x) => {
+    x = `${x}`.replace(/\s+/g, '');
+    if(x.length < 2) return;
+    if(x.length === 2) return clickBingo(transNum(x[0]) -1 , transNum(x[1]) - 1);
+    if(x.split("십").length === 2) return clickBingo(transNum(x.split("십")[0]) -1 , transNum(x.split("십")[1]) - 1);
+    if(transNum(x[0]) > 0) return clickBingo(transNum(x[0]) -1 , transNum(x.slice(1, x.length)) - 1);
+    if(transNum(x.slice(0, 2)) > 0) return clickBingo(transNum(x.slice(0, 2)) -1 , transNum(x.slice(2, x.length)) - 1);
+    return;
   }
 
   const commands = [
@@ -350,6 +360,10 @@ function App() {
     {
       command: '폭탄 :i :j',
       callback: (i, j) => clickBingo(transNum(i) -1 , transNum(j) - 1)
+    },
+    {
+      command: '폭탄 :x',
+      callback: (x) => transDoubleNum(x)
     },
     {
       command: '음성 해제',
@@ -409,7 +423,7 @@ function App() {
         `Q. 패턴 피하고 딜하느라 바쁜데요?`,
         `그런 당신을 위해 음성인식 모드를 넣었습니다. 음성인식 스위치를 켜면 음성 인식을 시작합니다. 단, 초록색으로 표시되는 인식한 단어를 보면 느끼시겠지만 인식률이 높지는 않아서 천천히 또박또박 말해주셔야 합니다.\n
          만약에 잘 못 알아들었으면 초록색 글씨가 사라지길 기다린 다음 말씀해주시면 됩니다. 지원되는 명령어는 아래와 같습니다.\n
-         폭탄 x y: 음성인식 모드를 키면 좌표가 나올 텐데, 폭탄과 놓을 좌표와 함께 말해주시면(e.g. 폭탄 둘 넷) 그 위치를 클릭한 효과를 냅니다. 일이삼사오도 인식은 되도록 했는데 하나둘셋넷다섯이 훨씬훨씬 인식률이 좋을 겁니다.\n
+         폭탄 x y: 폭탄 x y: 음성인식 모드를 키면 좌표가 나올 텐데, 폭탄과 놓을 좌표와 함께 말해주시면(e.g. 폭탄 둘 넷) 그 위치를 클릭한 효과를 냅니다. 일이삼사오도 인식은 되도록 했는데 하나둘셋넷다섯이 훨씬훨씬 인식률이 좋을 겁니다. 숫자를 붙여서 두 자릿수로 말 해도 인식이 됩니다. (e.g. 폭탄 이십사 or 폭탄 스물넷)\n
          취소: [취소]버튼과 동일한 효과입니다.\n
          리셋: [리셋]버튼과 동일한 효과입니다.\n
          이난나: 이난나 모드를 on/off 합니다.\n
@@ -418,11 +432,11 @@ function App() {
     ];
 
     return (<div className="desc-container">
-      {script.map(x => (<div>
-        <div className="desc-question">
+      {script.map((x, i) => (<div key={`desc-${i}`}>
+        <div className="desc-question" key={`descq=${i}`}>
           {x[0]}
         </div>
-        {x[1].split("\n").map(y => (<div className="desc-answer">{y}</div>))}
+        {x[1].split("\n").map((y, j) => (<div className="desc-answer" key={`desca=${i}${j}`}>{y}</div>))}
       </div>))}
     </div>)
   }
@@ -476,6 +490,15 @@ function App() {
           {BingoTableView}
         </div>
         {desc()}
+        <div className="dona">
+          <a href="https://donaricano.com/mypage/1709725536_JvgCKV" target="_blank" rel="noreferrer">
+            <img
+              src="https://d1u4yishnma8v5.cloudfront.net/donarincano_gift.png"
+              alt="donaricano-btn"
+              className="dona-img"
+            />
+          </a>
+        </div>
       </Container>
     </div>
   );

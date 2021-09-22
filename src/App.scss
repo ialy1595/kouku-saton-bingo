@@ -117,7 +117,7 @@ body {
 .desc-container {
   margin-top: 1rem;
   color: white;
-  margin-bottom: 10rem;
+  margin-bottom: 5rem;
 }
 
 .desc-question {
@@ -133,6 +133,19 @@ body {
   margin-right: 1rem;
   font-size: 1.1rem;
   line-height: 1.6;
+}
+
+.dona {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.dona-img {
+  height: 4rem;
+  object-fit: contain;
 }
 
 .nodrag {
