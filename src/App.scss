@@ -12,9 +12,28 @@ body {
   }
 }
 
+.head-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.link-container {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.link-icon {
+  margin: 0.5rem;
+}
+
 .tool-container {
   margin-top: 1rem;
   margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .button-container {
@@ -109,7 +128,7 @@ body {
 }
 
 .message-warning {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: #FF0000;
   height: 1.5rem;
 }

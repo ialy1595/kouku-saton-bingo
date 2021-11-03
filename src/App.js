@@ -5,6 +5,10 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
+import Link from '@mui/material/Link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
@@ -456,8 +460,22 @@ function App() {
     <div>
       <Container maxWidth="sm">
         <div className="tool-container">
-          <div className="message-warning">
-            {`※ 처음 오셨다면 아래 문답을 먼저 읽어주세요!`}
+          <div className="head-container">
+            <div className="message-warning">
+              {`※ 처음 오셨다면 아래 문답을 먼저 읽어주세요!`}
+            </div>
+            <div className="link-container">
+              <div className="link-icon">
+                <Link href="https://ialy1595.me/" underline="none" color="white">
+                  <FontAwesomeIcon icon={faHome} />
+                </Link>
+              </div>
+              <div className="link-icon">
+                <Link href="https://github.com/ialy1595/kouku-saton-bingo" underline="none" color="white">
+                  <FontAwesomeIcon icon={faGithub} />
+                </Link>
+              </div>
+            </div>
           </div>
           <div className="button-container">
             <div className="button-wrap">
