@@ -6,9 +6,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
 import Link from '@mui/material/Link';
+import Slider from '@mui/material/Slider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
@@ -26,6 +27,8 @@ function App() {
   const [isInanna, setIsInanna] = useState(false);
   const [warnMsg, setWarnMsg] = useState("");
   const [stillListening, setStillListening] = useState(false);
+  const [preferSkull, setPreferSkull] = useState(2);
+  const scoreWeight = [1e10, 2e9, 1e7, 5e4, 5e4 * 10 * preferSkull + 1e4, 100, 1];
 
   const transM = (a) => a[0].map((x, c) => a.map(r => r[c]))
   
@@ -107,20 +110,28 @@ function App() {
     const nowBingo = checkBingo(b);
     const check = [
       [false, false, false, false, false],
-      [false, true, false, false, false],
+      [false,  true, false, false, false],
       [false, false, false, false, false],
       [false, false, false, false, false],
       [false, false, false, false, false],
     ];
     const bfsq = [];
-    const isc = (x, y) => 4 - 0.5 * Math.max(Math.abs(x - 1), Math.abs(y - 1));
+
+    const isc = [
+      [  2,   2,   2,   2, 0.5],
+      [  2,  20,  10,   2, 0.5],
+      [  2,  10,   7,   2, 0.5],
+      [  2,   2,   2,   2, 0.5],
+      [0.5, 0.5, 0.5, 0.5, 0.5],
+    ]
 
     bfsq.push([1, 1]);
     for(let s = 0; s < bfsq.length; s++) {
       const tx = bfsq[s][0];
       const ty = bfsq[s][1];
-      if(!isRed(nowBingo, tx, ty)) res[0] += isc(tx, ty);
-      if(!b[tx][ty]) res[1]+= isc(tx, ty);
+      //if(!isRed(nowBingo, tx, ty)) res[0] += isc[tx][ty];
+      if(!isRed(nowBingo, tx, ty)) res[0] += 1;
+      if(!b[tx][ty]) res[1]+= isc[tx][ty];
       if(!isRed(nowBingo, tx, ty)) {
         [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(d => {
           const nx = tx + d[0];
@@ -136,8 +147,9 @@ function App() {
     }
     [0, 1, 2, 3, 4].forEach(i => {
       [0, 1, 2, 3, 4].forEach(j => {
-        if(!isRed(nowBingo, i, j)) res[2] += isc(i, j);
-        if(!b[i][j]) res[3]+= isc(i, j);
+        //if(!isRed(nowBingo, i, j)) res[2] += isc[i][j];
+        if(!isRed(nowBingo, i, j)) res[2] += 1;
+        if(!b[i][j]) res[3]+= isc[i][j];
       })
     });
     return res;
@@ -145,8 +157,7 @@ function App() {
 
   const scoreThird = (al) => {
     const res = [];
-    // 3빙고, 빨강, 가용, 해골, 빈가용, 총, 총빈
-    const scoreWeight = [1e10, 2e9, 1e7, 2e6, 1e4, 100, 1];
+    // 3빙고, 빨강, 가용, 빈가용, 해골, 총, 총빈
     const nowPlace = placeBingo(bingo[round], al);
     const nowBingo = checkBingo(nowPlace);
     for(let i = 0; i < 5; i++) {
@@ -176,8 +187,7 @@ function App() {
 
   const scoreSecond = (al) => {
     const res = [];
-    // 빨강, 가용, 해골, 빈가용, 총, 총빈
-    const scoreWeight = [2e9, 1e7, 2e6, 1e4, 100, 1];;
+    // 빨강, 가용, 빈가용, 해골, 총, 총빈
     const nowPlace = placeBingo(bingo[round], al);
     const nowBingo = checkBingo(nowPlace);
     for(let i = 0; i < 5; i++) {
@@ -192,7 +202,7 @@ function App() {
         score[4] = sp[2];
         score[5] = sp[3];
         let sc = 0;
-        for(let k = 0; k < 6; k++) sc += score[k] * scoreWeight[k];
+        for(let k = 0; k < 6; k++) sc += score[k] * scoreWeight[k + 1];
         const scThird = scoreThird([...al, [i, j]]).reduce((p, x) => Math.max(x.score, p), -1);
         res.push({
           x: i,
@@ -206,8 +216,7 @@ function App() {
 
   const scoreFirst = () => {
     const res = [];
-    // 빨강, 가용, 해골, 빈가용, 총, 총빈
-    const scoreWeight = [2e9, 1e7, 2e6, 1e4, 100, 1];;
+    // 빨강, 가용, 빈가용, 해골, 총, 총빈
     const nowPlace = bingo[round];
     const nowBingo = checkBingo(nowPlace);
     for(let i = 0; i < 5; i++) {
@@ -222,7 +231,7 @@ function App() {
         score[4] = sp[2];
         score[5] = sp[3];
         let sc = 0;
-        for(let k = 0; k < 6; k++) sc += score[k] * scoreWeight[k];
+        for(let k = 0; k < 6; k++) sc += score[k] * scoreWeight[k + 1];
         const scSecond = scoreSecond([[i, j]]).reduce((p, x) => Math.max(x.score, p), -1);
         res.push({
           x: i,
@@ -322,10 +331,14 @@ function App() {
     )
   }
 
-  const BingoTableView = useMemo(BingoTable, [bingo, round, isInanna, stillListening])
+  const BingoTableView = useMemo(BingoTable, [bingo, round, isInanna, stillListening, preferSkull])
 
   const handleInanna = (e) => {
     setIsInanna(e.target.checked);
+  }
+
+  const handlePreferSkull = (e) => {
+    setPreferSkull(e.target.value);
   }
 
   const transNum = (x) => {
@@ -415,6 +428,10 @@ function App() {
         `그런 당신을 위해 추천을 3위까지 해드립니다. 더 추천하는 자리일수록 진한 파란색으로 표시됩니다. 또한 가능한 한 세 자리 중 하나는 해골이 없는 자리가 포함되도록 했습니다.`
       ],
       [
+        `Q. 폭탄 놓으러 해골 위로 가기 싫어요.`,
+        `그런 당신을 위해 해골 위 폭탄 선호도를 조정할 수 있도록 했습니다. 왼쪽으로 갈수록 해골 여부와 상관 없이 추천하고, 오른쪽으로 갈수록 해골 위에 추천이 안 나옵니다. 맨 오른쪽으로 했는데도 해골 위에 추천이 뜨면 정말 그 자리가 좋은겁니다.`
+      ],
+      [
         `Q. 이번에 이난나 써서 넘길 건데요?`,
         `그런 당신을 위해 이난나 모드를 넣었습니다. 이난나 체크박스를 체크하시면 3빙고를 고려하지 않고 딜하기 편한지만 생각하여 추천해줍니다.\n
          단, 2번 연속으로 이난나를 쓸 경우는 없다고 생각하여 3빙고 타이밍이 지나면 자동으로 이난나 체크가 해제되도록 했습니다.`
@@ -486,7 +503,21 @@ function App() {
             </div>
             <FormControlLabel className="check" control={<Checkbox checked={isInanna} onChange={handleInanna} style={{color:'white'}}/>} label="이난나" />
           </div>
-          <div>
+          <div className="slider-container">
+            <div className="slider-desc">
+              {`해골 위 폭탄`}
+            </div>
+            <div className="slider-icon">
+              <FontAwesomeIcon icon={faThumbsUp} />
+            </div>
+            <div className="slider-wrap">
+              <Slider value={preferSkull} onChange={handlePreferSkull} step={1} marks min={0} max={4} />
+            </div>
+            <div className="slider-icon">
+              <FontAwesomeIcon icon={faThumbsDown} />
+            </div>
+          </div>
+          <div className="button-container">
             { browserSupportsSpeechRecognition ? 
               (<div className="speech">
                 <FormControlLabel control={<Switch checked={stillListening} onChange={handleSpeech} />} label="음성 인식" />

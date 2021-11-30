@@ -40,11 +40,35 @@ body {
   display: flex;
   flex-direction: row;
   font-size: 1.3rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  color: #FFFFFF;
 }
 
 .button-wrap {
   margin-right: 1rem;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: row;
+  font-size: 1.3rem;
+  align-items: center;
+  margin-top: 0.5rem;
+  color: #FFFFFF;
+}
+
+.slider-icon {
+  margin-left: 0.7rem;
+  margin-right:0.7rem;
+}
+
+.slider-desc {
+  font-size: 1.1rem;
+  margin-right: 1rem;
+}
+
+.slider-wrap {
+  width: 10rem;
 }
 
 .check {
@@ -159,7 +183,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
 }
 
 .dona-img {
