@@ -46,6 +46,18 @@ function App() {
     return false;
   }
 
+  const isIsolate = (b, x, y) => {
+    const isSk = (tx, ty) => {
+      if(tx < 0) return 1
+      if(tx > 4) return 1
+      if(ty < 0) return 1
+      if(ty > 4) return 1
+      if(b[tx][ty]) return 1
+      return 0
+    }
+    return isSk(x + 1, y + 1) + isSk(x + 1, y) + isSk(x + 1, y - 1) + isSk(x, y + 1) + isSk(x, y - 1) + isSk(x - 1, y + 1) + isSk(x - 1, y) +isSk(x - 1, y - 1)
+  }
+
   const placeBingo = (b, al) => {
     let nowBingo;
     const res = JSON.parse(JSON.stringify(b));
@@ -168,6 +180,7 @@ function App() {
         if(JSON.stringify(nowBingo) !== JSON.stringify(testBingo)) score[0] = 1;
         if(!isRed(nowBingo, i, j)) score[1] = 1;
         if(!nowPlace[i][j]) score[4] = 1;
+        if(isIsolate(nowPlace, i, j) === 8) score[4] = 0;
         const sp = scorePlace(testPlace);
         score[2] = sp[0];
         score[3] = sp[1];
@@ -196,6 +209,7 @@ function App() {
         const testPlace = placeBingo(nowPlace, [[i, j]]);
         if(!isRed(nowBingo, i, j)) score[0] = 1;
         if(!nowPlace[i][j]) score[3] = 1;
+        if(isIsolate(nowPlace, i, j) === 8) score[3] = 0;
         const sp = scorePlace(testPlace);
         score[1] = sp[0];
         score[2] = sp[1];
@@ -225,6 +239,7 @@ function App() {
         const testPlace = placeBingo(nowPlace, [[i, j]]);
         if(!isRed(nowBingo, i, j)) score[0] = 1;
         if(!nowPlace[i][j]) score[3] = 1;
+        if(isIsolate(nowPlace, i, j) === 8) score[3] = 0;
         const sp = scorePlace(testPlace);
         score[1] = sp[0];
         score[2] = sp[1];
@@ -539,14 +554,14 @@ function App() {
           {BingoTableView}
         </div>
         {desc()}
-        <div className="dona">
-          <a href="https://donaricano.com/mypage/1709725536_JvgCKV" target="_blank" rel="noreferrer">
-            <img
-              src="https://d1u4yishnma8v5.cloudfront.net/donarincano_gift.png"
-              alt="donaricano-btn"
-              className="dona-img"
-            />
-          </a>
+        <div className="dona-wrap">
+          <div className="dona">
+            <div className="message-dona">후원하기</div>
+            <div className="dona-box-wrap">
+              <a href="https://qr.kakaopay.com/FCxYaD9Ja" target="_blank" className="dona-box-kakao">kakao</a>
+              <a href="https://toss.me/ialy1595" target="_blank" className="dona-box-toss">toss</a>
+            </div>
+          </div>          
         </div>
       </Container>
     </div>

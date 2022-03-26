@@ -178,17 +178,62 @@ body {
   line-height: 1.6;
 }
 
+.dona-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
 .dona {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  border: 1px solid #FFAAAA;
+  border-radius: 2rem;
+}
+
+.message-dona {
+  color: #FFAAAA;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dona-box-wrap {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-bottom: 5rem;
 }
 
-.dona-img {
-  height: 4rem;
-  object-fit: contain;
+.dona-box-kakao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 6rem;
+  font-size: 2rem;
+  font-weight: bold;
+  background-color: #FEE500;
+  color: #3A1C1C;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin-right: 2rem;
+  text-decoration: none;
+}
+
+.dona-box-toss {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 6rem;
+  font-size: 2rem;
+  font-weight: bold;
+  background-color: #0050FF;
+  color: #FFFFFF;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
 }
 
 .nodrag {
