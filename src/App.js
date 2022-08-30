@@ -262,7 +262,7 @@ function App() {
         const testPlace = placeBingo(nowPlace, [[i, j]]);
         if(!isHellOver(testPlace)) {
           if(!isRed(nowBingo, i, j)) score[0] = 1;
-          if(!isSkull(nowPlace, i, i)) score[3] = 1;
+          if(!isSkull(nowPlace, i, j)) score[3] = 1;
           if(isIsolate(nowPlace, i, j) === 8) score[3] = 0;
           const sp = scorePlace(testPlace);
           score[1] = sp[0];
