@@ -36,6 +36,10 @@ body {
   margin-right: 1rem;
 }
 
+.radio-container span {
+    color: #FFFFFF
+}
+
 .button-container {
   display: flex;
   flex-direction: row;
@@ -154,7 +158,7 @@ body {
 .message-warning {
   font-size: 1.1rem;
   color: #FF0000;
-  height: 1.5rem;
+  min-height: 1.5rem;
 }
 
 .desc-container {
