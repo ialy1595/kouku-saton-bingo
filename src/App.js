@@ -2,7 +2,10 @@ import React, {useState, useMemo, useEffect} from 'react';
 import './App.scss';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
 import Link from '@mui/material/Link';
@@ -14,9 +17,11 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
 import hellSkullImage from './static/hellskull.png';
-
+import { useTranslation } from 'react-i18next';
 
 function App() {
+  const { t, i18n } = useTranslation();
+
   const [round, setRound] = useState(0);
   const [bingo, setBingo] = useState([[
     [false, false, false, false, false],
@@ -99,7 +104,7 @@ function App() {
     else if(round < 2) {
       const res = bingo.slice(0, round + 1);
       if(isSkull(res[round], x, y)) {
-        setWarnMsg("다른 위치에 놓아주세요!");
+        setWarnMsg(t("message.cannotPlace"));
       }
       else {
         res.push(JSON.parse(JSON.stringify(bingo[round])));
@@ -322,8 +327,8 @@ function App() {
     const res = [];
     const nowBingo = checkBingo(bingo[round]);
     const candi = candidateList();
-    if(round > 1 && candi.length === 0) setWarnMsg("무적빙고 불가능! 이난나 or GG");
-    if(isHellOver(bingo[round])) setWarnMsg("특수 타일에 해골이...GG");
+    if(round > 1 && candi.length === 0) setWarnMsg(t("message.impossibleInanna"));
+    if(isHellOver(bingo[round])) setWarnMsg(t("message.bombSpecialSkull"));
 
     for(let i = 0; i < 5; i++) {
       const tds = []
@@ -459,48 +464,14 @@ function App() {
 
   const desc = () => {
     const script = [
-      [
-        `Q. 어떻게 쓰면 되나요?`,
-        `처음에 놓인 두 해골 위치를 클릭해서 입력해주세요. 이후 폭탄을 놓을 때마다 그 위치를 클릭해주면 알아서 십자로 적용해줍니다.\n
-         잘못 클릭했을 경우 [취소] 버튼으로 되돌릴 수 있고, 처음부터 다시 할 경우 [리셋] 버튼을 누르면 됩니다.`
-      ],
-      [
-        `Q. 폭탄을 어디에 놓아야 좋을지 모르겠어요.`,
-        `그런 당신을 위해 추천 기능을 넣었습니다. 빙고 장판 중 파란색 배경인 부분이 추천하는 자리입니다.\n
-         일차적으로는 3번째마다 빙고(이하 3빙고)를 할 수 있는지를 고려하고, 그다음엔 위 중앙에 나오는 쿠크에게 딜하기 편한지를 고려합니다.\n
-         물론 수식 몇 개로 모든 경우의 수에 완벽한 답을 낼 순 없겠지만 대체로 쓸만할 겁니다 :)\n`
-      ],
-      [
-        `Q. 추천한 자리에 해골이나 망치가 있어요.`,
-        `그런 당신을 위해 추천을 3위까지 해드립니다. 더 추천하는 자리일수록 진한 파란색으로 표시됩니다. 또한 가능한 한 세 자리 중 하나는 해골이 없는 자리가 포함되도록 했습니다.`
-      ],
-      [
-        `Q. 폭탄 놓으러 해골 위로 가기 싫어요.`,
-        `그런 당신을 위해 해골 위 폭탄 선호도를 조정할 수 있도록 했습니다. 왼쪽으로 갈수록 해골 여부와 상관 없이 추천하고, 오른쪽으로 갈수록 해골 위에 추천이 안 나옵니다. 맨 오른쪽으로 했는데도 해골 위에 추천이 뜨면 정말 그 자리가 좋은겁니다.`
-      ],
-      [
-        `Q. 이번에 이난나 써서 넘길 건데요?`,
-        `그런 당신을 위해 이난나 모드를 넣었습니다. 이난나 체크박스를 체크하시면 3빙고를 고려하지 않고 딜하기 편한지만 생각하여 추천해줍니다.\n
-         단, 2번 연속으로 이난나를 쓸 경우는 없다고 생각하여 3빙고 타이밍이 지나면 자동으로 이난나 체크가 해제되도록 했습니다.`
-      ],
-      [
-        `Q. 저는 더블모니터가 아닌데요?`,
-        `그런 당신을 위해 (아마도) 모바일에서도 보기 편하도록 디자인했습니다. 님폰없?`
-      ],
-      [
-        `Q. 패턴 피하고 딜하느라 바쁜데요?`,
-        `그런 당신을 위해 음성인식 모드를 넣었습니다. 음성인식 스위치를 켜면 음성 인식을 시작합니다. 단, 초록색으로 표시되는 인식한 단어를 보면 느끼시겠지만 인식률이 높지는 않아서 천천히 또박또박 말해주셔야 합니다.\n
-         만약에 잘 못 알아들었으면 초록색 글씨가 사라지길 기다린 다음 말씀해주시면 됩니다. 지원되는 명령어는 아래와 같습니다.\n
-         폭탄 x y: 폭탄 x y: 음성인식 모드를 키면 좌표가 나올 텐데, 폭탄과 놓을 좌표와 함께 말해주시면(e.g. 폭탄 둘 넷) 그 위치를 클릭한 효과를 냅니다. 일이삼사오도 인식은 되도록 했는데 하나둘셋넷다섯이 훨씬훨씬 인식률이 좋을 겁니다. 숫자를 붙여서 두 자릿수로 말 해도 인식이 됩니다. (e.g. 폭탄 이십사 or 폭탄 스물넷)\n
-         취소: [취소]버튼과 동일한 효과입니다.\n
-         리셋: [리셋]버튼과 동일한 효과입니다.\n
-         이난나: 이난나 모드를 on/off 합니다.\n
-         음성 해제: 음성인식 모드를 해제합니다.`
-      ],
-      [
-        `Q. 저는 헬 난이도 하고 있는데요?`,
-        `그런 당신을 위해 헬모드를 넣었습니다. 처음 클릭에 특수 타일 위치를 클릭하고, 그 다음 클릭에 일반 해골 타일 위치를 클릭하면 됩니다.`
-      ]
+      [t("description.q1"), t("description.a1")],
+      [t("description.q2"), t("description.a2")],
+      [t("description.q3"), t("description.a3")],
+      [t("description.q4"), t("description.a4")],
+      [t("description.q5"), t("description.a5")],
+      [t("description.q6"), t("description.a6")],
+      [t("description.q7"), t("description.a7")],
+      [t("description.q8"), t("description.a8")],
     ];
 
     return (<div className="desc-container">
@@ -529,8 +500,17 @@ function App() {
       <Container maxWidth="sm">
         <div className="tool-container">
           <div className="head-container">
-            <div className="message-warning">
-              {`※ 처음 오셨다면 아래 문답을 먼저 읽어주세요!`}
+            <div className="radio-container">
+              <FormControl>
+                <RadioGroup
+                  row
+                  onChange={(_, value) => {i18n.changeLanguage(value)}}
+                  defaultValue={i18n.resolvedLanguage}
+                >
+                  <FormControlLabel value="kr" control={<Radio />} label="KR" />
+                  <FormControlLabel value="en" control={<Radio />} label="EN" />
+                </RadioGroup>
+              </FormControl>
             </div>
             <div className="link-container">
               <div className="link-icon">
@@ -545,19 +525,22 @@ function App() {
               </div>
             </div>
           </div>
+          <div className="message-warning">
+              {t("warning")}
+            </div>
           <div className="button-container">
             <div className="button-wrap">
-              <Button variant="contained" onClick={resetBingo}>리셋</Button>
+              <Button variant="contained" onClick={resetBingo}>{t("options.reset")}</Button>
             </div>
             <div className="button-wrap">
-              <Button variant="contained" className="btn" onClick={cancleBingo}>취소</Button>
+              <Button variant="contained" className="btn" onClick={cancleBingo}>{t("options.cancel")}</Button>
             </div>
-            <FormControlLabel className="check" control={<Checkbox checked={isInanna} onChange={handleInanna} style={{color:'white'}}/>} label="이난나" />
-            <FormControlLabel className="check" control={<Checkbox checked={isHell} onChange={handleHell} style={{color:'white'}}/>} label="헬난이도" />
+            <FormControlLabel className="check" control={<Checkbox checked={isInanna} onChange={handleInanna} style={{color:'white'}}/>} label={t("options.inanna")} />
+            <FormControlLabel className="check" control={<Checkbox checked={isHell} onChange={handleHell} style={{color:'white'}}/>} label={t("options.hell")} />
           </div>
           <div className="slider-container">
             <div className="slider-desc">
-              {`해골 위 폭탄`}
+              {t("options.skullSlider")}
             </div>
             <div className="slider-icon">
               <FontAwesomeIcon icon={faThumbsUp} />
@@ -572,16 +555,18 @@ function App() {
           <div className="button-container">
             { browserSupportsSpeechRecognition ? 
               (<div className="speech">
-                <FormControlLabel control={<Switch checked={stillListening} onChange={handleSpeech} />} label="음성 인식" />
+                <FormControlLabel control={<Switch checked={stillListening} onChange={handleSpeech} />} label={t("options.speech")} />
                 <div className="speech-script">{transcript}</div>
               </div>) :
               (<div className="message-warning">
-                {`브라우저가 음성 인식을 지원하지 않습니다.`}
+                {t("options.speechWarning")}
               </div>)
             }          
           </div>
           <div className="message-desc">
-            {`${round < 2 ? ((round === 0 && isHell) ? "특수 해골" : "초기 해골") : `${round - 1}번째 폭탄`} 놓을 차례${(!isInanna) && (round % 3 === 1) && (round > 1)? " (무적용 빙고 해야됨!)" : ""}`}
+            {`${round < 2
+              ? ((round === 0 && isHell) ? t("message.specialSkull") : t("message.initialSkull"))
+              : `${round - 1}${t("message.bombNumber")}`} ${t("message.placementTime")}${(!isInanna) && (round % 3 === 1) && (round > 1)? t("message.needBingo") : ""}`}
           </div>
           <div className="message-warning">
             {`${warnMsg}`}
@@ -593,7 +578,7 @@ function App() {
         {desc()}
         <div className="dona-wrap">
           <div className="dona">
-            <div className="message-dona">후원하기</div>
+            <div className="message-dona">{t("donate")}</div>
             <div className="dona-box-wrap">
               <a href="https://qr.kakaopay.com/FCxYaD9Ja" target="_blank" className="dona-box-kakao">kakao</a>
               <a href="https://toss.me/ialy1595" target="_blank" className="dona-box-toss">toss</a>
