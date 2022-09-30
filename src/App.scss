@@ -189,26 +189,18 @@ body {
   margin-bottom: 5rem;
 }
 
-.dona {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  border: 1px solid #FFAAAA;
-  border-radius: 2rem;
-}
-
-.message-dona {
-  color: #FFAAAA;
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-}
-
 .dona-box-wrap {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.dona-image {
+  height: 2.5rem;
+  border-radius: 1rem;
+  margin: 0 0.5rem 0 0.5rem;
+  object-fit: cover;
 }
 
 .dona-box-kakao {

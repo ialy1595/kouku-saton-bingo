@@ -17,6 +17,9 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import skullImage from './static/skull.png';
 import redSkullImage from './static/redskull.png';
 import hellSkullImage from './static/hellskull.png';
+import kakaopayImage from './static/kakaopay.jpg'
+import paypalImage from './static/paypal.jpg';
+import buymeacoffeeImage from './static/buymeacoffee.jpg';
 import { useTranslation } from 'react-i18next';
 
 function App() {
@@ -577,13 +580,11 @@ function App() {
         </div>
         {desc()}
         <div className="dona-wrap">
-          <div className="dona">
-            <div className="message-dona">{t("donate")}</div>
-            <div className="dona-box-wrap">
-              <a href="https://qr.kakaopay.com/FCxYaD9Ja" target="_blank" className="dona-box-kakao">kakao</a>
-              <a href="https://toss.me/ialy1595" target="_blank" className="dona-box-toss">toss</a>
-            </div>
-          </div>          
+          <div className="dona-box-wrap">
+            <a href="https://paypal.me/ialy1595" target="_blank"><img className="dona-image" src={paypalImage} alt=""/></a>
+            <a href="https://qr.kakaopay.com/FCxYaD9Ja" target="_blank"><img className="dona-image" src={kakaopayImage} alt=""/></a>
+            <a href="https://www.buymeacoffee.com/ialy1595" target="_blank"><img className="dona-image" src={buymeacoffeeImage} alt=""/></a>
+          </div>
         </div>
       </Container>
     </div>
