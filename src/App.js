@@ -41,6 +41,14 @@ function App() {
   const [preferSkull, setPreferSkull] = useState(2);
   const scoreWeight = [1e10, 2e9, 1e7, 5e4, 5e4 * 10 * preferSkull + 1e4, 100, 1];
 
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   const transM = (a) => a[0].map((x, c) => a.map(r => r[c]))
   
   const checkBingo = (a) => ({
@@ -578,6 +586,13 @@ function App() {
         <div className="bingo-container">
           {BingoTableView}
         </div>
+        <ins className="adsbygoogle"
+          style={{display: "block"}}
+          data-ad-client="ca-pub-9351793940385765"
+          data-ad-slot="5016049614"
+          data-ad-format="auto"
+          data-full-width-responsive="true">
+        </ins>
         {desc()}
         <div className="dona-wrap">
           <div className="dona-box-wrap">
